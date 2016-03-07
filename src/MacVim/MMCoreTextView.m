@@ -577,10 +577,18 @@ defaultAdvanceForFont(NSFont *font)
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
     [context setShouldAntialias:antialias];
 
+    CGContextRef ctx = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+    int savedFontSmoothingStyle = CGContextGetFontSmoothingStyle(ctx);
+    CGContextSetFontSmoothingStyle(ctx, 16);
+    CGContextSetTextDrawingMode(ctx, kCGTextFill);
+
     id data;
     NSEnumerator *e = [drawData objectEnumerator];
     while ((data = [e nextObject]))
         [self batchDrawData:data];
+
+    CGContextSetFontSmoothingStyle(ctx, savedFontSmoothingStyle);
 
     [drawData removeAllObjects];
 }
